@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="BlazorAnimate" Version="3.0.0" />
+    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="MudBlazor" Version="6.18.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Polly" Version="8.3.1" />
+    <PackageReference Include="Radzen.Blazor" Version="4.28.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APIntegro.Domain\APIntegro.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

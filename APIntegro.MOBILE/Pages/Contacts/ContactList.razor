@@ -1,0 +1,107 @@
+﻿@using APIntegro.Domain.Entities
+@using APIntegro.MOBILE.Components
+@inject APIntegro.MOBILE.Interfaces.IContactService _contactService
+@inject APIntegro.MOBILE.Data.LoginSession Session
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+<div class="row d-flex justify-content-end mb-5">
+    <div class="col-xl-6 col-lg-8 col-12">
+        <ContactToolBar Contacts="Contacts" />
+    </div>
+</div>
+
+@if (!_loadCompleted)
+{
+    <MudCard>
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+        <MudCardContent>
+            <MudSkeleton Height="42px;" />
+            <MudSkeleton />
+            <MudSkeleton />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Height="40px" Class="ml-2" />
+            <MudSkeleton Height="40px" Class="ml-3" />
+        </MudCardActions>
+    </MudCard>
+}
+else
+{
+    <MudDataGrid Items="@Contacts" Striped="true" Filterable="false" SortMode="@SortMode.None" Groupable="false" QuickFilter="@quickFilter">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchQuery" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        </ToolBarContent>
+
+        <Columns>
+            <PropertyColumn CellClass="fw-bold" Property="x => x.firstname" Title="First Name" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.lastname" Title="Last Name" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.phone" Title="Phone" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.email" Title="Email" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.birthday" Title="Birthday" />
+
+            <TemplateColumn CellClass="fw-bold" Title="Department">
+                <CellTemplate>
+                    @if (!string.IsNullOrWhiteSpace(context.Item.department))
+                    {
+                        <MudChip Variant="MudBlazor.Variant.Text" Color="@GetDepartmentColor(context.Item.department)">
+                            @context.Item.department
+                        </MudChip>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+
+            <TemplateColumn Class="d-flex justify-content-center" CellClass="d-flex justify-content-center" Title="Action">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudTooltip Color="Color.Error" Text="Delete" Placement="Placement.Left" Arrow="true">
+                            <MudFab OnClick="@(async () => await Delete(context.Item))" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                        </MudTooltip>
+
+                        <MudTooltip Color="Color.Tertiary" Text="Info" Placement="Placement.Right" Arrow="true">
+                            @{
+                                string link = $"/Contact/Details/{context.Item.id}";
+                            }
+                            <MudLink Href="@link">
+                                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Info" Size="Size.Small" />
+                            </MudLink>
+                        </MudTooltip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+
+        </Columns>
+
+    </MudDataGrid>
+
+    if (_noContactFound)
+    {
+        <div class="row mt-4">
+            <div class="d-flex justify-content-center">
+                <MudChip Variant="MudBlazor.Variant.Text" Color="Color.Tertiary" Size="Size.Large">No Contacts Registered</MudChip>
+            </div>
+        </div>
+    }
+}
+
+
+
+@code {
+    private IEnumerable<Contact>? Contacts;
+    private string _searchQuery = string.Empty;
+    private bool _noContactFound;
+    private bool _loadCompleted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Contacts = await LoadContacts();
+
+        _noContactFound = !Contacts.Any();
+
+        _loadCompleted = true;
+        await base.OnInitializedAsync();
+    }
+}

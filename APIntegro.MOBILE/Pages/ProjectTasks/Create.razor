@@ -1,0 +1,231 @@
+﻿@page "/ProjectTask/New"
+@using APIntegro.Domain.Entities
+@inject APIntegro.MOBILE.Interfaces.IProjectTaskService _projectTaskService
+@inject APIntegro.MOBILE.Interfaces.IProjectService _projectService
+@inject AutoMapper.IMapper _mapper
+@inject ISnackbar Snackbar
+@inject APIntegro.MOBILE.Data.LoginSession Session
+
+
+<div class="d-flex justify-content-center">
+    <RadzenCard class="rz-shadow-12 rz-border-radius-6 mb-5 col-xl-8 col-lg-10 col-md-10 col-12">
+        <h1 class="text-center">Create New Task</h1>
+    </RadzenCard>
+</div>
+
+@if (!_loadCompleted)
+{
+    <MudCard>
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+        <MudCardContent>
+            <MudSkeleton Width="30%" Height="42px;" />
+            <MudSkeleton Width="80%" />
+            <MudSkeleton Width="100%" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+            <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+        </MudCardActions>
+    </MudCard>
+}
+else
+{
+    if (_noProjectFound)
+    {
+        <div class="row mt-4">
+            <div class="d-flex justify-content-center">
+                <MudAlert Severity="Severity.Warning">
+                    No Projects Available, please create a project before inserting a task.
+                </MudAlert>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="d-flex justify-content-center">
+                <MudLink Href="/Project/New">
+                    <MudButton Variant="MudBlazor.Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Work"
+                               Color="Color.Info">Create Project</MudButton>
+                </MudLink>
+
+                <MudLink Href="/ProjectTask">
+                    <MudButton Class="ml-2"
+                               Variant="MudBlazor.Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Backspace"
+                               Color="Color.Dark">Cancel</MudButton>
+                </MudLink>
+            </div>
+        </div>
+        return;
+    }
+
+    <EditForm Model="ProjectTask" OnValidSubmit="@Submit">
+        <DataAnnotationsValidator />
+
+        <div class="d-flex justify-content-center">
+            <RadzenCard class="rz-shadow-12 rz-border-radius-6 rz-p-8 col-xl-8 col-lg-10 col-md-10 col-12">
+
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Select Assigned Project" AnchorOrigin="Origin.BottomCenter" @bind-Value="ProjectTask.projectid" T="string">
+                                @foreach (var item in Projects)
+                                {
+                                    <MudSelectItem Value="@item.id" T="string">@item.projectname</MudSelectItem>
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskstatus)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Task Name" @bind-Value="ProjectTask.projecttaskname" />
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskname)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudNumericField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Hours" HideSpinButtons="true" @bind-Value="@TaskHours" @onfocusout="(() => ProjectTask.projecttaskhours = TaskHours.ToString())" />
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskhours)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Start Date" DateFormat="dd/MM/yyyy" @bind-Date="@StartDate" @onfocusout="(() => ProjectTask.startdate = StartDate.ToString())" />
+                            <ValidationMessage For="@(() => ProjectTask.startdate)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="End Date" DateFormat="dd/MM/yyyy" @bind-Date="@EndDate" @onfocusout="(() => ProjectTask.enddate = EndDate.ToString())" />
+                            <ValidationMessage For="@(() => ProjectTask.enddate)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Status" AnchorOrigin="Origin.BottomCenter" @bind-Value="ProjectTask.projecttaskstatus" T="string">
+                                @foreach (var item in Status)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskstatus)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="ProjectTask.projecttasktype" T="string">
+                                @foreach (var item in Types)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => ProjectTask.projecttasktype)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Priority" AnchorOrigin="Origin.BottomCenter" @bind-Value="ProjectTask.projecttaskpriority" T="string">
+                                @foreach (var item in Priorities)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskpriority)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Progress" AnchorOrigin="Origin.BottomCenter" @bind-Value="ProjectTask.projecttaskprogress" T="string">
+                                @foreach (var item in Progresses)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => ProjectTask.projecttaskprogress)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Description" Lines="4" @bind-Value="ProjectTask.description" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <MudButton ButtonType="MudBlazor.ButtonType.Submit"
+                                   Class="mr-2"
+                                   Variant="MudBlazor.Variant.Filled"
+                                   StartIcon="@BtnIcon"
+                                   Color="Color.Info">
+                            @if (_isLoading)
+                            {
+                                <MudProgressCircular Color="Color.Default" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Saving...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Save</MudText>
+                            }
+                        </MudButton>
+
+                        <MudLink Href="/ProjectTask">
+                            <MudButton Variant="MudBlazor.Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.Backspace"
+                                       Color="Color.Dark">Cancel</MudButton>
+                        </MudLink>
+                    </div>
+                </div>
+
+            </RadzenCard>
+        </div>
+    </EditForm>
+}
+
+
+
+
+@code {
+
+    ProjectTask ProjectTask = new();
+    DateTime? StartDate;
+    DateTime? EndDate;
+    int TaskHours = 0;
+    private List<string> Status = new() { "Open", "In Progress", "Completed", "Deferred", "Canceled" };
+    private List<string> Types = new() { "Administrative", "Operating", "Others" };
+    private List<string> Priorities = new() { "Low", "Normal", "High" };
+    private List<string> Progresses = new() { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%" };
+
+    private bool _isLoading;
+    private bool _loadCompleted = false;
+    private string BtnIcon = Icons.Material.Filled.FileDownloadDone;
+
+    IEnumerable<Project>? Projects = Enumerable.Empty<Project>();
+    private bool _noProjectFound = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Projects = await LoadProjects();
+
+        _noProjectFound = !Projects.Any();
+
+        _loadCompleted = true;
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,171 @@
+﻿@page "/Project/New"
+@using APIntegro.Domain.Entities
+@inject APIntegro.WEB.Interfaces.IProjectService _projectService
+@inject AutoMapper.IMapper _mapper
+@inject ISnackbar Snackbar
+@inject APIntegro.WEB.Data.LoginSession Session
+
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(0.5)">
+    <div class="d-flex justify-content-center">
+        <RadzenCard class="rz-shadow-12 rz-border-radius-6 mb-5 col-xl-8 col-lg-10 col-md-10 col-12">
+            <h1 class="text-center">Creating New Project</h1>
+        </RadzenCard>
+    </div>
+</Animate>
+
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(1)">
+    <EditForm Model="Project" OnValidSubmit="@Submit">
+        <DataAnnotationsValidator />
+
+        <div class="d-flex justify-content-center">
+            <RadzenCard class="rz-shadow-12 rz-border-radius-6 rz-p-8 col-xl-8 col-lg-10 col-md-10 col-12">
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Project Name" @bind-Value="Project.projectname" />
+                            <ValidationMessage For="@(() => Project.projectname)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Start Date" DateFormat="dd/MM/yyyy" @bind-Date="@StartDate" @onfocusout="(() => Project.startdate = StartDate.ToString())" />
+                            <ValidationMessage For="@(() => Project.startdate)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Target End Date" DateFormat="dd/MM/yyyy" @bind-Date="@TargetEndDate" @onfocusout="(() => Project.targetenddate = TargetEndDate.ToString())" />
+                            <ValidationMessage For="@(() => Project.targetenddate)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Actual End Date" DateFormat="dd/MM/yyyy" @bind-Date="@ActualEndDate" @onfocusout="(() => Project.actualenddate = ActualEndDate.ToString())" />
+                            <ValidationMessage For="@(() => Project.actualenddate)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Status" AnchorOrigin="Origin.BottomCenter" @bind-Value="Project.projectstatus" T="string">
+                                @foreach (var item in Status)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => Project.projectstatus)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Type" AnchorOrigin="Origin.BottomCenter" @bind-Value="Project.projecttype" T="string">
+                                @foreach (var item in Types)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => Project.projecttype)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudNumericField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Target Budget" HideSpinButtons="true" @bind-Value="@TargetBudget" @onfocusout="(() => Project.targetbudget = TargetBudget.ToString())" />
+                            <ValidationMessage For="@(() => Project.targetbudget)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Project URL" @bind-Value="Project.projecturl" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Priority" AnchorOrigin="Origin.BottomCenter" @bind-Value="Project.projectpriority" T="string">
+                                @foreach (var item in Priorities)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => Project.projectpriority)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Progress" AnchorOrigin="Origin.BottomCenter" @bind-Value="Project.progress" T="string">
+                                @foreach (var item in Progresses)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => Project.progress)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Description" Lines="4" @bind-Value="Project.description" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <MudButton ButtonType="MudBlazor.ButtonType.Submit"
+                                   Class="mr-2"
+                                   Variant="MudBlazor.Variant.Filled"
+                                   StartIcon="@BtnIcon"
+                                   Color="Color.Info">
+                            @if (_isLoading)
+                            {
+                                <MudProgressCircular Color="Color.Default" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Saving...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Save</MudText>
+                            }
+                        </MudButton>
+
+                        <MudLink Href="/Project">
+                            <MudButton Variant="MudBlazor.Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.Backspace"
+                                       Color="Color.Dark">Cancel</MudButton>
+                        </MudLink>
+                    </div>
+                </div>
+
+            </RadzenCard>
+        </div>
+    </EditForm>
+</Animate>
+
+
+@code {
+
+    Project Project = new();
+    DateTime? StartDate;
+    DateTime? TargetEndDate;
+    DateTime? ActualEndDate;
+    decimal TargetBudget = 0.00m;
+    private List<string> Status = new() { "Prospecting", "Initiated", "In Progress", "Waiting for Feedback", "On Hold", "Completed", "Delivered", "Archived" };
+    private List<string> Types = new() { "Administrative", "Operating", "Others" };
+    private List<string> Priorities = new() { "Low", "Normal", "High" };
+    private List<string> Progresses = new() { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%" };
+
+    private bool _isLoading;
+    private string BtnIcon = Icons.Material.Filled.FileDownloadDone;
+}

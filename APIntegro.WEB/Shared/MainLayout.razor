@@ -1,0 +1,43 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+@inject APIntegro.WEB.Data.LoginSession Session
+@using APIntegro.WEB.Pages.Authentication
+
+<PageTitle>APIntegro Web</PageTitle>
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="page">
+    @if (Session.IsAdminLogin)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
+
+    <main class="rz-background-color-base-100">
+        @if (Session.IsAdminLogin)
+        {
+            <article class="content px-4">
+                @Body
+            </article>
+        }
+        else
+        {
+            <Login />
+        }
+    </main>
+</div>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (Nav.Uri.EndsWith("/Login", StringComparison.OrdinalIgnoreCase))
+        {
+            Nav.NavigateTo("/");
+        }
+    }
+}

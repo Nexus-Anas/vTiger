@@ -1,0 +1,61 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href=""><h4 class="ml-2">ADMIN PANEL</h4></a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="" Match="NavLinkMatch.All">
+                <RadzenIcon Icon="home" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Dashboard</MudText>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="Project">
+                <RadzenIcon Icon="work" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Projects</MudText>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="ProjectTask">
+                <RadzenIcon Icon="task" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Project Tasks</MudText>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="#">
+                <RadzenIcon Icon="diamond" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Project Milestones</MudText>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="Contact">
+                <RadzenIcon Icon="person" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Contacts</MudText>
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link text-white" href="Organization">
+                <RadzenIcon Icon="location_city" /> <MudText Typo="Typo.body1">&nbsp;&nbsp; Organizations</MudText>
+            </NavLink>
+        </div>
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

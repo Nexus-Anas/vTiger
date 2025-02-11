@@ -1,0 +1,114 @@
+﻿@page "/Contact/New"
+@using APIntegro.Domain.Entities
+@inject APIntegro.WEB.Interfaces.IContactService _contactService
+@inject AutoMapper.IMapper _mapper
+@inject ISnackbar Snackbar
+@inject APIntegro.WEB.Data.LoginSession Session
+
+
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(0.5)">
+    <div class="d-flex justify-content-center">
+        <RadzenCard class="rz-shadow-12 rz-border-radius-6 mb-5 col-xl-8 col-lg-10 col-md-10 col-12">
+            <h1 class="text-center">Creating New Contact</h1>
+        </RadzenCard>
+    </div>
+</Animate>
+
+<Animate Animation="Animations.FadeDown" Duration="TimeSpan.FromSeconds(1)">
+    <EditForm Model="Contact" OnValidSubmit="@Submit">
+        <DataAnnotationsValidator />
+
+        <div class="d-flex justify-content-center">
+            <RadzenCard class="rz-shadow-12 rz-border-radius-6 rz-p-8 col-xl-8 col-lg-10 col-md-10 col-12">
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="First Name" @bind-Value="Contact.firstname" />
+                            <ValidationMessage For="@(() => Contact.firstname)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Last Name" @bind-Value="Contact.lastname" />
+                            <ValidationMessage For="@(() => Contact.lastname)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Phone Number" @bind-Value="Contact.phone" />
+                            <ValidationMessage For="@(() => Contact.phone)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Email" @bind-Value="Contact.email" />
+                            <ValidationMessage For="@(() => Contact.email)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudDatePicker Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Birthday" DateFormat="dd/MM/yyyy" @bind-Date="@Birthday" @onfocusout="(() => Contact.birthday = Birthday.ToString())" />
+                            <ValidationMessage For="@(() => Contact.birthday)" />
+                        </RadzenColumn>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                        <RadzenColumn>
+                            <MudSelect Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Department" AnchorOrigin="Origin.BottomCenter" @bind-Value="Contact.department" T="string">
+                                @foreach (var item in Departments)
+                                {
+                                    <MudSelectItem Value="@item" T="string" />
+                                }
+                            </MudSelect>
+                            <ValidationMessage For="@(() => Contact.department)" />
+                        </RadzenColumn>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <MudButton ButtonType="MudBlazor.ButtonType.Submit"
+                                   Class="mr-2"
+                                   Variant="MudBlazor.Variant.Filled"
+                                   StartIcon="@BtnIcon"
+                                   Color="Color.Info">
+                            @if (_isLoading)
+                            {
+                                <MudProgressCircular Color="Color.Default" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Saving...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Save</MudText>
+                            }
+                        </MudButton>
+
+                        <MudLink Href="/Contact">
+                            <MudButton Variant="MudBlazor.Variant.Filled"
+                                       StartIcon="@Icons.Material.Filled.Backspace"
+                                       Color="Color.Dark">Cancel</MudButton>
+                        </MudLink>
+                    </div>
+                </div>
+
+            </RadzenCard>
+        </div>
+    </EditForm>
+</Animate>
+
+
+@code {
+
+    Contact Contact = new();
+    DateTime? Birthday;
+    private List<string> Departments = new() { "Human Resources", "Finance", "Marketing", "Sales", "IT", "Operations", "Customer Support", "Research and Development", "Salesforce Administration" };
+    
+    private bool _isLoading;
+    private string BtnIcon = Icons.Material.Filled.FileDownloadDone;
+}

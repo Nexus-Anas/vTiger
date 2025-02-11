@@ -1,0 +1,195 @@
+﻿@page "/"
+@using APIntegro.Domain.Entities
+@inject ISnackbar Snackbar
+@inject APIntegro.WEB.Data.LoginSession Session
+@inject APIntegro.WEB.Interfaces.IProjectService _projectService
+@inject APIntegro.WEB.Interfaces.IProjectTaskService _projectTaskService
+@inject APIntegro.WEB.Interfaces.IContactService _contactTaskService
+@inject APIntegro.WEB.Interfaces.IOrganizationService _organizationTaskService
+
+<PageTitle>Index</PageTitle>
+
+<div class="row mb-5 text-center">
+    <MudAlert Severity="Severity.Info" Icon="@Icons.Material.Filled.VerifiedUser">Welcome @Session.User.username</MudAlert>
+</div>
+
+<div class="row">
+    @if (!_loadCompleted)
+    {
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <MudCard>
+                <MudCardContent>
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Text" Width="50px" Height="20px" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+            </MudCard>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <MudCard>
+                <MudCardContent>
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Text" Width="50px" Height="20px" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+            </MudCard>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <MudCard>
+                <MudCardContent>
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Text" Width="50px" Height="20px" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+            </MudCard>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <MudCard>
+                <MudCardContent>
+                    <MudSkeleton SkeletonType="SkeletonType.Circle" Width="50px" Height="50px" />
+                    <MudSkeleton SkeletonType="SkeletonType.Text" Width="50px" Height="20px" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+            </MudCard>
+        </div>
+    }
+    else
+    {
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <Animate Animation="Animations.FadeUp" Duration="TimeSpan.FromSeconds(1)">
+                <MudCard Class="rounded" Style="background: linear-gradient(to right, cyan, mediumspringgreen)">
+                    <MudCardContent>
+                        <MudText Class="text text-white" Typo="Typo.h4">Projects</MudText>
+                        <MudText Class="text text-white text-end fw-bold" Typo="Typo.h2">@_projectsCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </Animate>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <Animate Animation="Animations.FadeUp" Duration="TimeSpan.FromSeconds(1)">
+                <MudCard Class="rounded" Style="background: linear-gradient(to right, dodgerblue, darkslateblue)">
+                    <MudCardContent>
+                        <MudText Class="text text-white" Typo="Typo.h4">Tasks</MudText>
+                        <MudText Class="text text-white text-end fw-bold" Typo="Typo.h2">@_projectTasksCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </Animate>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <Animate Animation="Animations.FadeUp" Duration="TimeSpan.FromSeconds(1)">
+                <MudCard Class="rounded" Style="background: linear-gradient(to right, orange, crimson)">
+                    <MudCardContent>
+                        <MudText Class="text text-white" Typo="Typo.h4">Contacts</MudText>
+                        <MudText Class="text text-white text-end fw-bold" Typo="Typo.h2">@_contactsCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </Animate>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-5">
+            <Animate Animation="Animations.FadeUp" Duration="TimeSpan.FromSeconds(1)">
+                <MudCard Class="rounded" Style="background: linear-gradient(to right, mediumseagreen, turquoise)">
+                    <MudCardContent>
+                        <MudText Class="text text-white" Typo="Typo.h4">Organizations</MudText>
+                        <MudText Class="text text-white text-end fw-bold" Typo="Typo.h2">@_organizationsCount</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </Animate>
+        </div>
+    }
+</div>
+
+<div class="row">
+    @if (!_loadCompleted)
+    {
+        <div class="col-xl-6 col-12 mb-2">
+            <MudCard>
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+                <MudCardContent>
+                    <MudSkeleton Width="30%" Height="42px;" />
+                    <MudSkeleton Width="80%" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+                    <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+                </MudCardActions>
+            </MudCard>
+        </div>
+        <div class="col-xl-6 col-12 mb-2">
+            <MudCard>
+                <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+                <MudCardContent>
+                    <MudSkeleton Width="30%" Height="42px;" />
+                    <MudSkeleton Width="80%" />
+                    <MudSkeleton Width="100%" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
+                    <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
+                </MudCardActions>
+            </MudCard>
+        </div>
+    }
+    else
+    {
+        <div class="col-xl-6 col-12 mb-2">
+            <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" Delay="TimeSpan.FromSeconds(0.2)">
+                <MudPaper Class="pa-4">
+                    <MudText Typo="Typo.body1" Class="py-3">@(_projectsIndex < 0 ? "Selected: None" : $"Projects {_projectsLabels[_projectsIndex]}: {_projectsData[_projectsIndex]}")</MudText>
+                    <MudChart ChartType="ChartType.Pie" InputData="@_projectsData" @bind-SelectedIndex="_projectsIndex" InputLabels="@_projectsLabels" Width="300px" Height="300px" />
+                </MudPaper>
+            </Animate>
+        </div>
+
+        <div class="col-xl-6 col-12 mb-2">
+            <Animate Animation="Animations.ZoomIn" Duration="TimeSpan.FromSeconds(1)" Delay="TimeSpan.FromSeconds(0.5)">
+                <MudPaper Class="pa-4">
+                    <MudText Typo="Typo.body1" Class="py-3">@(_projectTasksIndex < 0 ? "Selected: None" : $"Tasks {_projectTasksLabels[_projectTasksIndex]}: {_projectTasksData[_projectTasksIndex]}")</MudText>
+                    <MudChart ChartType="ChartType.Donut" InputData="@_projectTasksData" @bind-SelectedIndex="_projectTasksIndex" InputLabels="@_projectTasksLabels" Width="300px" Height="300px" />
+                </MudPaper>
+            </Animate>
+        </div>
+    }
+</div>
+
+@code {
+    bool _loadCompleted = false;
+
+    private int _projectsIndex = -1;
+    public string[] _projectsLabels = {};
+    public double[] _projectsData = {};
+
+    private int _projectTasksIndex = -1;
+    public string[] _projectTasksLabels = { };
+    public double[] _projectTasksData = { };
+
+
+
+    private int _projectsCount = 0, _projectTasksCount = 0, _contactsCount = 0, _organizationsCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Session.DisplayNotif)
+            Snackbar.Add("Login Successfull", Severity.Success);
+        Session.DisplayNotif = false;
+
+
+        _projectsCount = await _projectService.ProjectsCount();
+        _projectTasksCount = await _projectTaskService.ProjectTasksCount();
+        _contactsCount = await _contactTaskService.ContactsCount();
+        _organizationsCount = await _organizationTaskService.OrganizationsCount();
+
+        Dictionary<string, double>? projectStatesChart = await _projectService.ProjectsStatesChart();
+        _projectsLabels = projectStatesChart.Keys.ToArray();
+        _projectsData = projectStatesChart.Values.ToArray();
+
+        Dictionary<string, double>? projectTaskStatesChart = await _projectTaskService.ProjectTasksStatesChart();
+        _projectTasksLabels = projectTaskStatesChart.Keys.ToArray();
+        _projectTasksData = projectTaskStatesChart.Values.ToArray();
+
+        _loadCompleted = true;
+
+        await base.OnInitializedAsync();
+    }
+
+}

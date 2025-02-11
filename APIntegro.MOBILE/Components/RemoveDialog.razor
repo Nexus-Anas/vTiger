@@ -1,0 +1,18 @@
+﻿<MudDialog TitleClass="rz-background-color-danger rz-color-white">
+    <DialogContent>
+        <MudText Typo="Typo.body1">@Message</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="Close">Delete</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string Message { get; set; }
+
+    private void Cancel() => MudDialog.Cancel();
+    private void Close() => MudDialog.Close();
+}

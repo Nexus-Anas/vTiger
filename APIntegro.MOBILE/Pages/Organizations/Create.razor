@@ -1,0 +1,113 @@
+﻿@page "/Organization/New"
+@using APIntegro.Domain.Entities
+@inject APIntegro.MOBILE.Interfaces.IOrganizationService _organizationService
+@inject AutoMapper.IMapper _mapper
+@inject ISnackbar Snackbar
+@inject APIntegro.MOBILE.Data.LoginSession Session
+
+
+<div class="d-flex justify-content-center">
+    <RadzenCard class="rz-shadow-12 rz-border-radius-6 mb-5 col-xl-8 col-lg-10 col-md-10 col-12">
+        <h1 class="text-center">Creating New Organization</h1>
+    </RadzenCard>
+</div>
+
+<EditForm Model="Organization" OnValidSubmit="@Submit">
+    <DataAnnotationsValidator />
+
+    <div class="d-flex justify-content-center">
+        <RadzenCard class="rz-shadow-12 rz-border-radius-6 rz-p-8 col-xl-8 col-lg-10 col-md-10 col-12">
+
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Organization Name" @bind-Value="Organization.accountname" />
+                        <ValidationMessage For="@(() => Organization.accountname)" />
+                    </RadzenColumn>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Number of Employees" @bind-Value="Organization.employees" />
+                        <ValidationMessage For="@(() => Organization.employees)" />
+                    </RadzenColumn>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Phone Number" @bind-Value="Organization.phone" />
+                        <ValidationMessage For="@(() => Organization.phone)" />
+                    </RadzenColumn>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Fax Number" @bind-Value="Organization.fax" />
+                        <ValidationMessage For="@(() => Organization.fax)" />
+                    </RadzenColumn>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Primary Email Address" @bind-Value="Organization.email1" />
+                        <ValidationMessage For="@(() => Organization.email1)" />
+                    </RadzenColumn>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudTextField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Secondary Email Address" @bind-Value="Organization.email2" />
+                        <ValidationMessage For="@(() => Organization.email2)" />
+                    </RadzenColumn>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 mb-3">
+                    <RadzenColumn>
+                        <MudNumericField Variant="MudBlazor.Variant.Outlined" Class="mb-1" Label="Annual Revenue" HideSpinButtons="true" @bind-Value="@AnnualRevenue" @onfocusout="(() => Organization.annual_revenue = AnnualRevenue.ToString())" />
+                        <ValidationMessage For="@(() => Organization.annual_revenue)" />
+                    </RadzenColumn>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <MudButton ButtonType="MudBlazor.ButtonType.Submit"
+                               Class="mr-2"
+                               Variant="MudBlazor.Variant.Filled"
+                               StartIcon="@BtnIcon"
+                               Color="Color.Info">
+                        @if (_isLoading)
+                        {
+                            <MudProgressCircular Color="Color.Default" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Saving...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Save</MudText>
+                        }
+                    </MudButton>
+
+                    <MudLink Href="/Organization">
+                        <MudButton Variant="MudBlazor.Variant.Filled"
+                                   StartIcon="@Icons.Material.Filled.Backspace"
+                                   Color="Color.Dark">Cancel</MudButton>
+                    </MudLink>
+                </div>
+            </div>
+
+        </RadzenCard>
+    </div>
+</EditForm>
+
+
+
+@code {
+    Organization Organization = new();
+    decimal AnnualRevenue = 0.00m;
+
+    private bool _isLoading;
+    private string BtnIcon = Icons.Material.Filled.FileDownloadDone;
+}

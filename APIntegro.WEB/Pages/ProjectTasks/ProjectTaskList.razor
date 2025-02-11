@@ -1,0 +1,110 @@
+﻿@using APIntegro.Domain.Entities
+@using APIntegro.WEB.Components
+@inject APIntegro.WEB.Interfaces.IProjectTaskService _projectTaskService
+@inject APIntegro.WEB.Data.LoginSession Session
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+<div class="row d-flex justify-content-end mb-5">
+    <div class="col-xl-6 col-lg-8 col-12">
+        <ProjectTasksToolBar />
+    </div>
+</div>
+
+
+
+@if (!_loadCompleted)
+{
+    <MudCard>
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
+        <MudCardContent>
+            <MudSkeleton Height="42px;" />
+            <MudSkeleton />
+            <MudSkeleton />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Height="40px" Class="ml-2" />
+            <MudSkeleton Height="40px" Class="ml-3" />
+        </MudCardActions>
+    </MudCard>
+}
+else
+{
+    <MudDataGrid Items="@ProjectTasks" Striped="true" Filterable="false" SortMode="@SortMode.None" Groupable="false" QuickFilter="@quickFilter">
+        <ToolBarContent>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchQuery" Placeholder="Search" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        </ToolBarContent>
+
+        <Columns>
+            <PropertyColumn CellClass="fw-bold" Property="x => x.projecttaskname" Title="Task Name" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.startdate" Title="Start Date" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.enddate" Title="End Date" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.projecttaskhours" Title="Hours" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.projecttaskstatus" Title="Status" />
+            <PropertyColumn CellClass="fw-bold" Property="x => x.projecttaskpriority" Title="Priority" />
+
+            <TemplateColumn CellClass="fw-bold" Title="Progress">
+                <CellTemplate>
+                    @if (!string.IsNullOrWhiteSpace(context.Item.projecttaskprogress))
+                    {
+                        <MudChip Variant="MudBlazor.Variant.Text" Color="@GetProgressColor(context.Item.projecttaskprogress)">
+                            @context.Item.projecttaskprogress
+                        </MudChip>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+
+            <TemplateColumn Class="d-flex justify-content-center" CellClass="d-flex justify-content-center" Title="Action">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudTooltip Color="Color.Error" Text="Delete" Placement="Placement.Left" Arrow="true">
+                            <MudFab OnClick="@(async () => await Delete(context.Item))" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                        </MudTooltip>
+
+                        <MudTooltip Color="Color.Tertiary" Text="Info" Placement="Placement.Right" Arrow="true">
+                            @{
+                                string link = $"/ProjectTask/Details/{context.Item.id}";
+                            }
+                            <MudLink Href="@link">
+                                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Info" Size="Size.Small" />
+                            </MudLink>
+                        </MudTooltip>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+
+        </Columns>
+
+    </MudDataGrid>
+
+    if (_noProjectFound)
+    {
+        <div class="row mt-4">
+            <div class="d-flex justify-content-center">
+                <MudChip Variant="MudBlazor.Variant.Text" Color="Color.Tertiary" Size="Size.Large">No Task Available</MudChip>
+            </div>
+        </div>
+    }
+}
+
+
+
+@code {
+    private IEnumerable<ProjectTask>? ProjectTasks;
+    private string _searchQuery = string.Empty;
+    private bool _noProjectFound;
+    private bool _loadCompleted = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProjectTasks = await LoadProjectTasks();
+
+        _noProjectFound = !ProjectTasks.Any();
+
+        _loadCompleted = true;
+        await base.OnInitializedAsync();
+    }
+}

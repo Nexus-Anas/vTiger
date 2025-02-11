@@ -1,0 +1,74 @@
+﻿@using APIntegro.MOBILE.ViewModels.Authentication
+@inject NavigationManager Nav
+@inject APIntegro.MOBILE.Data.LoginSession Session
+@inject ISnackbar Snackbar
+@inject APIntegro.MOBILE.Interfaces.IAuthService _service
+
+<div style="background-color: rgb(26, 26, 39); height:100vh; width:100%">
+    <div class="d-flex align-items-center justify-content-center">
+        <RadzenCard class="rz-my-12 rz-mx-10 rz-border-radius-6" Style="width:450px">
+            <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="Radzen.AlignItems.Center" Gap="1rem" Class="rz-p-1">
+                <RadzenImage Path="/images/vtiger.jpg" Style="width: 100px; height: 100px;" />
+                <RadzenStack Gap="0">
+                    <RadzenText TextStyle="TextStyle.H1"><span style="color:#2b2a39" class="text text-center fw-bold">vtiger</span></RadzenText>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+
+    <EditForm Model="LoginVM" OnValidSubmit="Submit">
+        <DataAnnotationsValidator />
+
+        <div class="d-flex align-items-center justify-content-center">
+            <RadzenCard class="rz-shadow-10 rz-my-12 rz-mx-10 rz-border-radius-6" Style="width:450px; background-color: rgb(30, 30, 45)">
+                <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem">
+                    <MudText Class="text-white" Typo="Typo.h3">Sign In</MudText>
+                </RadzenStack>
+                <RadzenCard class="rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
+                    <RadzenColumn Size="12" SizeMD="6" SizeLG="3" class="mb-4">
+                        <ValidationMessage For="@(() => LoginVM.UserName)" />
+                        <RadzenFormField Text="Username" class="text text-secondary w-100">
+                            <RadzenTextBox @bind-Value="LoginVM.UserName" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+
+                    <RadzenColumn Size="12" SizeMD="6" SizeLG="3" class="mb-3">
+                        <ValidationMessage For="@(() => LoginVM.AccessKey)" />
+                        <RadzenFormField Text="Access Key" class="text text-secondary w-100">
+                            <RadzenPassword @bind-Value="LoginVM.AccessKey" />
+                        </RadzenFormField>
+                    </RadzenColumn>
+                </RadzenCard>
+                <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="2rem">
+                    <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                        <MudButton ButtonType="MudBlazor.ButtonType.Submit"
+                                   Class="rounded-lg ml-4"
+                                   Style="background-color:#28283d"
+                                   Variant="MudBlazor.Variant.Filled"
+                                   StartIcon="@_btnSubmitIcon"
+                                   Color="Color.Primary">
+                            @if (_isLoading)
+                            {
+                                <MudProgressCircular Color="Color.Info" Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Logging In</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Login</MudText>
+                            }
+                        </MudButton>
+                    </RadzenColumn>
+                </RadzenStack>
+            </RadzenCard>
+        </div>
+    </EditForm>
+
+</div>
+
+
+@code {
+    LoginVM LoginVM = new();
+    private bool _isLoading;
+    private bool _isDisabled;
+    private string _btnSubmitIcon = Icons.Material.Filled.Login;
+}

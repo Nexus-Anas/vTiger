@@ -1,0 +1,34 @@
+﻿@using APIntegro.Domain.Entities
+@inject ISnackbar Snackbar
+
+<MudPaper Class="rounded-xl" Elevation="15">
+    <MudToolBar Class="p-3">
+        <MudAvatar>
+            <MudImage Src="images/vtiger.jpg"></MudImage>
+        </MudAvatar>
+
+        <MudSpacer />
+
+        <MudTooltip Text="Add Project" Color="Color.Info" Placement="Placement.Bottom">
+            <Animate Animation="Animations.FlipRight" Duration="TimeSpan.FromSeconds(0.5)">
+                <MudLink Href="/Project/New">
+                    <MudFab Class="mr-3" Color="Color.Info" StartIcon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" />
+                </MudLink>
+            </Animate>
+        </MudTooltip>
+
+        <MudTooltip Text="Export" Color="Color.Warning" Placement="Placement.Bottom">
+            <MudFab OnClick="ExportToExcel" Class="mr-3" Color="Color.Warning" StartIcon="@Icons.Material.Filled.Download" Size="Size.Medium" />
+        </MudTooltip>
+
+        <MudTooltip Text="Customize" Color="Color.Success" Placement="Placement.Bottom">
+            <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Build" Size="Size.Medium" />
+        </MudTooltip>
+
+    </MudToolBar>
+</MudPaper>
+
+@code {
+    [Parameter]
+    public IEnumerable<Project>? Projects { get; set; }
+}
